@@ -1,13 +1,14 @@
+repository: https://github.com/mfazrinizar/flutter_secure_dotenv
 name: flutter_secure_dotenv
 description: A starting point for Dart libraries or applications.
 version: 1.0.0
-# repository: https://github.com/my_org/my_repo
 
 environment:
   sdk: ^3.6.0
 
 # Add regular dependencies here.
 dependencies:
+  pointycastle: ^3.9.1
   # path: ^1.8.0
 
 dev_dependencies:
