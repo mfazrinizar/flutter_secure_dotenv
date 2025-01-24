@@ -1,7 +1,7 @@
 repository: https://github.com/mfazrinizar/flutter_secure_dotenv
 name: flutter_secure_dotenv
 description: Package to securely manage environment variables and perform AES encryption/decryption in Flutter and Dart.
-version: 1.0.0
+version: 1.0.1
 
 environment:
   sdk: ^3.6.0

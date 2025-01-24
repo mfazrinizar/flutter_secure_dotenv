@@ -20,11 +20,11 @@ To use the `flutter_secure_dotenv` package, you need to add it as a dependency i
 
 ```yaml
 dependencies:
-  flutter_secure_dotenv: ^1.0.0
+  flutter_secure_dotenv: ^1.0.1
 
 dev_dependencies:
   build_runner: ^2.4.14
-  flutter_secure_dotenv_generator: ^1.0.0
+  flutter_secure_dotenv_generator: ^1.0.3
 ```
 
 Then, run the following command to fetch the packages:
@@ -78,7 +78,7 @@ abstract class Env {
 NOTE: Encryption keys must be 128, 192, or 256 bits long. If you want to encrypt sensitive values, you can run the following command:
 
 ```shell
-$ dart run build_runner build --define flutter_secure_dotenv_generator:flutter_secure_dotenv=ENCRYPTION_KEY=encryption_key  --define flutter_secure_dotenv_generator:flutter_secure_dotenv=IV=your_iv
+$ dart run build_runner build --define flutter_secure_dotenv_generator:flutter_secure_dotenv=ENCRYPTION_KEY=Your_Encryption_Key --define flutter_secure_dotenv_generator:flutter_secure_dotenv=IV=Your_IV_Key --define flutter_secure_dotenv_generator:flutter_secure_dotenv=OUTPUT_FILE=encryption_key.json
 ```
 
 where `encryption_key` is the encryption key you want to use to encrypt sensitive values and `your_iv` is the initialization vector.

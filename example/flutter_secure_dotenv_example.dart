@@ -1,26 +1,27 @@
 import 'package:flutter_secure_dotenv/flutter_secure_dotenv.dart';
 
-void main() {
-  // Example usage of DotEnvGen
-  final dotenv =
-      DotEnvGen(filename: 'custom.env', fieldRename: FieldRename.snake);
-  print('DotEnvGen filename: ${dotenv.filename}');
-  print('DotEnvGen fieldRename: ${dotenv.fieldRename}');
+part 'env.g.dart';
 
-  // Example usage of AESCBCEncrypter
-  final key = Uint8List.fromList(List.generate(32, (i) => i)); // 256-bit key
-  final iv = Uint8List.fromList(List.generate(16, (i) => i)); // 128-bit IV
-  final text = 'Hello, World!';
+@DotEnvGen(
+  filename: '.env',
+  fieldRename: FieldRename.screamingSnake,
+)
+abstract class Env {
+  static Env create() {
+    String encryptionKey = const String.fromEnvironment(
+        "APP_ENCRYPTION_KEY"); // On build, change with your generated encryption key (use dart-define for String.fromEnvironment)
+    String iv = const String.fromEnvironment(
+        "APP_IV_KEY"); // On build, change with your generated iv (use dart-define for String.fromEnvironment)
+    return Env(encryptionKey, iv);
+  }
 
-  // Encrypt the text
-  final encrypted = AESCBCEncrypter.aesCbcEncrypt(key, iv, text);
-  print('Encrypted text: $encrypted');
+  const factory Env(String encryptionKey, String iv) = _$Env;
 
-  // Decrypt the text
-  final decrypted = AESCBCEncrypter.aesCbcDecrypt(key, iv, encrypted);
-  print('Decrypted text: $decrypted');
+  const Env._();
 
-  // Generate random bytes
-  final randomBytes = AESCBCEncrypter.generateRandomBytes(16);
-  print('Random bytes: $randomBytes');
+  @FieldKey(defaultValue: "")
+  String get apiBaseUrl;
+
+  @FieldKey(defaultValue: "")
+  String get apiWebSocketUrl;
 }
