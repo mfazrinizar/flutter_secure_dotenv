@@ -9,7 +9,8 @@ build/
 
 # In real repository, don't commit env files with real secrets. See .env.example for an example of what to commit.
 .env*
-# Commit the example env file, it will be used as a template for users to create their own .env file.
+# Commit the example .env files — they contain only sample data for demonstration purposes.
+!.env
 !.env.example
 
 # The real env.dart is gitignored — only env.example.dart is committed.

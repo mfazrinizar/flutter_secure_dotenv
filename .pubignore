@@ -1,0 +1,33 @@
+# Files to exclude from pub.dev publishing.
+# See https://dart.dev/go/pubignore
+#
+# When .pubignore exists, pub uses it INSTEAD of .gitignore.
+# We must replicate the ignores we want here.
+
+.dart_tool/
+pubspec.lock
+.vscode/
+encryption_key.json
+pubspec_overrides.yaml
+
+# Ignore .env files EXCEPT the example one (needed for build_runner demo)
+.env*
+!example/.env
+!example/.env.example
+
+# Example build artifacts & generated files
+example/build/
+example/.dart_tool/
+example/pubspec.lock
+example/pubspec_overrides.yaml
+example/lib/env.dart
+example/lib/env.g.dart
+example/encryption_key.json
+
+# Flutter platform folders — not needed in published package
+example/android/
+example/ios/
+example/web/
+example/linux/
+example/macos/
+example/windows/
