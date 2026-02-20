@@ -1,3 +1,7 @@
+/// Securely manage environment variables with AES-CBC encryption.
+///
+/// Provides [DotEnvGen] for annotating classes, [AESCBCEncrypter] for
+/// encryption/decryption, and [FieldKey]/[FieldRename] for field configuration.
 library;
 
 export 'dart:convert' show json, base64;

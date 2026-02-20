@@ -6,6 +6,9 @@ import "package:pointycastle/export.dart";
 
 /// A class that provides AES encryption and decryption using CBC mode.
 class AESCBCEncrypter {
+  /// This class is not meant to be instantiated. Use static methods instead.
+  AESCBCEncrypter._();
+
   /// Encrypts the given [text] using AES in CBC mode with the provided [key] and [iv].
   ///
   /// The [key] must be 128, 192, or 256 bits long.
