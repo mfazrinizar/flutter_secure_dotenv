@@ -6,6 +6,12 @@ on:
   pull_request:
     branches: [main, dev]
 
+# The root package has no cross-repo deps — only pointycastle (hosted).
+# example/ depends on flutter_secure_dotenv_generator ^2.0.0 which is
+# not yet on pub.dev, so its resolution warns during dart pub get.
+# We use "|| true" because the root package always resolves; only the
+# example causes exit 1. Once the generator is published, remove "|| true".
+
 jobs:
   analyze:
     name: Analyze
@@ -15,9 +21,9 @@ jobs:
       - uses: dart-lang/setup-dart@v1
         with:
           sdk: stable
-      - run: dart pub get
+      - run: dart pub get || true
       - run: dart format --set-exit-if-changed .
-      - run: dart analyze --fatal-infos
+      - run: dart analyze --fatal-infos lib/ test/
 
   test:
     name: Test
@@ -25,13 +31,13 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
-        sdk: [stable, "3.7.0"]
+        sdk: [stable, "3.8.0"]
     steps:
       - uses: actions/checkout@v4
       - uses: dart-lang/setup-dart@v1
         with:
           sdk: ${{ matrix.sdk }}
-      - run: dart pub get
+      - run: dart pub get || true
       - run: dart test
 
   dry-run:
@@ -44,7 +50,7 @@ jobs:
       - uses: dart-lang/setup-dart@v1
         with:
           sdk: stable
-      - run: dart pub get
+      - run: dart pub get || true
       - run: dart pub publish --dry-run
 
   pana:
@@ -56,5 +62,5 @@ jobs:
         with:
           sdk: stable
       - run: dart pub global activate pana
-      - run: dart pub get
+      - run: dart pub get || true
       - run: dart pub global run pana --no-warning .

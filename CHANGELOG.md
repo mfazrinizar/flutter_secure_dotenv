@@ -1,6 +1,7 @@
 ## 2.0.0
 
 - **BREAKING**: Updated `pointycastle` dependency from `^3.9.1` to `^4.0.0`.
+- **BREAKING**: Minimum Dart SDK bumped from `^3.6.0` to `^3.8.0`.
 - **Security**: Removed insecure `String.fromEnvironment()` / `--dart-define` pattern from examples (addresses [#2](https://github.com/mfazrinizar/flutter_secure_dotenv/issues/2)).
 - Added `SECURITY.md` with detailed encryption key management guidance.
 - Updated README with security warnings and recommended key provisioning approaches.
@@ -10,7 +11,6 @@
 - Added 100% `public_member_api_docs` coverage.
 - Made `AESCBCEncrypter` non-instantiable (static-only utility class).
 - Added library-level dartdoc comments.
-- Added GitHub Actions CI workflow.
 - Added `CONTRIBUTING.md`.
 
 ## 1.0.1

@@ -4,7 +4,7 @@ description: Package to securely manage environment variables and perform AES en
 version: 2.0.0
 
 environment:
-  sdk: ^3.6.0
+  sdk: ^3.8.0
 
 dependencies:
   pointycastle: ^4.0.0
