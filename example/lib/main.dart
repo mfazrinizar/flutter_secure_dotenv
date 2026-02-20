@@ -12,10 +12,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'flutter_secure_dotenv Example',
-      theme: ThemeData(
-        colorSchemeSeed: Colors.deepPurple,
-        useMaterial3: true,
-      ),
+      theme: ThemeData(colorSchemeSeed: Colors.deepPurple, useMaterial3: true),
       home: const EnvDemoPage(),
     );
   }
@@ -45,9 +42,7 @@ class _EnvDemoPageState extends State<EnvDemoPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Secure Dotenv Demo'),
-      ),
+      appBar: AppBar(title: const Text('Secure Dotenv Demo')),
       body: _error != null ? _buildError() : _buildEnvTable(),
     );
   }
@@ -89,8 +84,10 @@ class _EnvDemoPageState extends State<EnvDemoPage> {
           (e) => Card(
             margin: const EdgeInsets.only(bottom: 12),
             child: ListTile(
-              title:
-                  Text(e.key, style: const TextStyle(fontFamily: 'monospace')),
+              title: Text(
+                e.key,
+                style: const TextStyle(fontFamily: 'monospace'),
+              ),
               subtitle: Text(e.value),
             ),
           ),

@@ -16,11 +16,7 @@ class AESCBCEncrypter {
   /// The [text] is padded using PKCS7 padding.
   ///
   /// Returns the encrypted text as a [Uint8List].
-  static Uint8List aesCbcEncrypt(
-    Uint8List key,
-    Uint8List iv,
-    String text,
-  ) {
+  static Uint8List aesCbcEncrypt(Uint8List key, Uint8List iv, String text) {
     final paddedPlaintext = pad(utf8.encode(text), 16);
     if (![128, 192, 256].contains(key.length * 8)) {
       throw ArgumentError.value(key, 'key', 'invalid key length for AES');
@@ -30,7 +26,10 @@ class AESCBCEncrypter {
     }
     if (paddedPlaintext.length * 8 % 128 != 0) {
       throw ArgumentError.value(
-          paddedPlaintext, 'paddedPlaintext', 'invalid length for AES');
+        paddedPlaintext,
+        'paddedPlaintext',
+        'invalid length for AES',
+      );
     }
 
     // Create a CBC block cipher with AES, and initialize with key and IV
@@ -85,7 +84,10 @@ class AESCBCEncrypter {
     }
     if (cipherText.length * 8 % 128 != 0) {
       throw ArgumentError.value(
-          cipherText, 'cipherText', 'invalid length for AES');
+        cipherText,
+        'cipherText',
+        'invalid length for AES',
+      );
     }
 
     // Create a CBC block cipher with AES, and initialize with key and IV

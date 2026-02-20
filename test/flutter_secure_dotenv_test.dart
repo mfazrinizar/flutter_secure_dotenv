@@ -73,12 +73,15 @@ void main() {
 
   group('AESCBCEncrypter', () {
     // Standard test vectors
-    final key128 =
-        Uint8List.fromList(List.generate(16, (i) => i)); // 128-bit key
-    final key192 =
-        Uint8List.fromList(List.generate(24, (i) => i)); // 192-bit key
-    final key256 =
-        Uint8List.fromList(List.generate(32, (i) => i)); // 256-bit key
+    final key128 = Uint8List.fromList(
+      List.generate(16, (i) => i),
+    ); // 128-bit key
+    final key192 = Uint8List.fromList(
+      List.generate(24, (i) => i),
+    ); // 192-bit key
+    final key256 = Uint8List.fromList(
+      List.generate(32, (i) => i),
+    ); // 256-bit key
     final iv = Uint8List.fromList(List.generate(16, (i) => i)); // 128-bit IV
 
     group('encrypt and decrypt round-trip', () {
@@ -138,8 +141,11 @@ void main() {
           'DEBUG': 'true',
           'PORT': '3000',
         });
-        final encrypted =
-            AESCBCEncrypter.aesCbcEncrypt(key256, iv, jsonContent);
+        final encrypted = AESCBCEncrypter.aesCbcEncrypt(
+          key256,
+          iv,
+          jsonContent,
+        );
         final decrypted = AESCBCEncrypter.aesCbcDecrypt(key256, iv, encrypted);
         expect(decrypted, jsonContent);
         expect(jsonDecode(decrypted), isA<Map>());
@@ -336,10 +342,16 @@ void main() {
         final randomKey = AESCBCEncrypter.generateRandomBytes(32);
         final randomIv = AESCBCEncrypter.generateRandomBytes(16);
         const text = 'Test with random key';
-        final encrypted =
-            AESCBCEncrypter.aesCbcEncrypt(randomKey, randomIv, text);
-        final decrypted =
-            AESCBCEncrypter.aesCbcDecrypt(randomKey, randomIv, encrypted);
+        final encrypted = AESCBCEncrypter.aesCbcEncrypt(
+          randomKey,
+          randomIv,
+          text,
+        );
+        final decrypted = AESCBCEncrypter.aesCbcDecrypt(
+          randomKey,
+          randomIv,
+          encrypted,
+        );
         expect(decrypted, text);
       });
     });
@@ -350,8 +362,9 @@ void main() {
         final encrypted = AESCBCEncrypter.aesCbcEncrypt(key256, iv, text);
         // Decryption with wrong key should either throw or produce garbage
         try {
-          final wrongKey =
-              Uint8List.fromList(List.generate(32, (i) => 255 - i));
+          final wrongKey = Uint8List.fromList(
+            List.generate(32, (i) => 255 - i),
+          );
           final result = AESCBCEncrypter.aesCbcDecrypt(wrongKey, iv, encrypted);
           expect(result, isNot(equals(text)));
         } catch (_) {

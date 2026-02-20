@@ -21,10 +21,7 @@ import 'package:flutter_secure_dotenv/flutter_secure_dotenv.dart';
 
 part 'env.g.dart';
 
-@DotEnvGen(
-  filename: '.env',
-  fieldRename: FieldRename.screamingSnake,
-)
+@DotEnvGen(filename: '.env', fieldRename: FieldRename.screamingSnake)
 abstract class Env {
   // ── Replace these placeholders with real values from encryption_key.json ──
   static const _encryptionKey = 'PASTE_BASE64_ENCRYPTION_KEY_HERE';
