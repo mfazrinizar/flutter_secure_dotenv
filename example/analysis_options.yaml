@@ -1,0 +1,10 @@
+include: package:flutter_lints/flutter.yaml
+
+analyzer:
+  exclude:
+    # Template file — not meant to be compiled directly.
+    - lib/env.example.dart
+
+linter:
+  rules:
+    avoid_print: false

@@ -12,7 +12,7 @@ Upgrade to `flutter_secure_dotenv` today and bid farewell to insecure and flawed
 
 | Android | iOS | MacOS | Web | Linux | Windows |
 | :-----: | :-: | :---: | :-: | :---: | :-----: |
-|   ✅   | ✅  |  ✅   | ✅  |  ✅   |  ✅  |
+|   ✅    | ✅  |  ✅   | ✅  |  ✅   |   ✅    |
 
 ## Installing
 
@@ -20,11 +20,11 @@ To use the `flutter_secure_dotenv` package, you need to add it as a dependency i
 
 ```yaml
 dependencies:
-  flutter_secure_dotenv: ^1.0.1
+  flutter_secure_dotenv: ^2.0.0
 
 dev_dependencies:
   build_runner: ^2.4.14
-  flutter_secure_dotenv_generator: ^1.0.3
+  flutter_secure_dotenv_generator: ^2.0.0
 ```
 
 Then, run the following command to fetch the packages:
@@ -33,81 +33,148 @@ Then, run the following command to fetch the packages:
 $ dart pub get
 ```
 
+## ⚠️ Security Notice: Encryption Key Management
+
+> **NEVER** ship `encryption_key.json` or any key file inside your app bundle. A JSON file in the APK/IPA is plaintext — extractable with a simple `unzip`, no decompilation needed. The JSON file from `OUTPUT_FILE` is a **temporary transfer mechanism**: copy the key into your gitignored `env.dart`, then delete the JSON immediately, or GITIGNORE it.
+
+**Recommended approach — hardcode in gitignored `env.dart`:**
+
+```dart
+// ✅ env.dart (GITIGNORED — never committed to source control)
+//    Copy values from the temporary encryption_key.json, then delete it.
+static const _encryptionKey = 'base64-key-from-encryption_key.json';
+static const _iv = 'base64-iv-from-encryption_key.json';
+
+static Env create() => Env(_encryptionKey, _iv);
+```
+
+> **The honest trade-off**: The key IS in the compiled binary. `--obfuscate` makes it significantly harder to find but not impossible. Without a server, this is a fundamental limitation of all client-side secret management — not specific to this package. For maximum protection, fetch the key from a server at runtime.
+
+**Most secure approach — server-fetched key + `flutter_secure_storage`:**
+
+```dart
+// ✅ Key never exists in the binary — fetched from server on first launch
+static Future<Env> create() async {
+  const storage = FlutterSecureStorage();
+  var key = await storage.read(key: 'env_encryption_key');
+  var iv = await storage.read(key: 'env_iv');
+
+  if (key == null || iv == null) {
+    final keys = await fetchKeysFromServer(); // your secure HTTPS call
+    key = keys['ENCRYPTION_KEY']!;
+    iv = keys['IV']!;
+    await storage.write(key: 'env_encryption_key', value: key);
+    await storage.write(key: 'env_iv', value: iv);
+  }
+
+  return Env(key, iv);
+}
+```
+
+For a complete security analysis, see [SECURITY.md](SECURITY.md).
+
 ## Usage
 
 To generate Dart classes from a `.env` file using the `flutter_secure_dotenv` package, follow the steps below:
 
-1. Create a Dart file in your project and import the necessary dependencies:
+1. Create `env.example.dart` (committed to git as a template) and `.gitignore` entries:
+
+```gitignore
+# .gitignore
+lib/env.dart
+lib/env.g.dart
+encryption_key.json
+.env*
+```
+
+2. Define your environment class in `env.example.dart`:
 
 ```dart
 import 'package:flutter_secure_dotenv/flutter_secure_dotenv.dart';
-import 'enum.dart' as e;
 
-part 'example.g.dart';
-```
+part 'env.g.dart';
 
-2. Define the environment class and annotate it with `@DotEnvGen`:
-
-```dart
 @DotEnvGen(
   filename: '.env',
   fieldRename: FieldRename.screamingSnake,
 )
 abstract class Env {
-  const factory Env(String encryptionKey) = _$Env;
+  // Replace with real values from encryption_key.json, then delete the JSON.
+  static const _encryptionKey = 'PASTE_BASE64_ENCRYPTION_KEY_HERE';
+  static const _iv = 'PASTE_BASE64_IV_HERE';
+
+  static Env create() => Env(_encryptionKey, _iv);
+
+  const factory Env(String encryptionKey, String iv) = _$Env;
 
   const Env._();
 
   // Declare your environment variables as abstract getters
-  String get name;
+  String get apiKey;
 
   @FieldKey(defaultValue: 1)
   int get version;
 
-  e.Test? get test;
-
-  @FieldKey(name: 'TEST_2', defaultValue: e.Test.b)
-  e.Test get test2;
-
-  String get blah => '2';
+  @FieldKey(name: 'DEBUG_MODE', defaultValue: 'false')
+  String get debugMode;
 }
 ```
 
-3. Generate the Dart classes by running the following command in your project's root directory:
-
-NOTE: Encryption keys must be 128, 192, or 256 bits long. If you want to encrypt sensitive values, you can run the following command:
+3. Copy the template to create your real `env.dart`:
 
 ```shell
-$ dart run build_runner build --define flutter_secure_dotenv_generator:flutter_secure_dotenv=ENCRYPTION_KEY=Your_Encryption_Key --define flutter_secure_dotenv_generator:flutter_secure_dotenv=IV=Your_IV_Key --define flutter_secure_dotenv_generator:flutter_secure_dotenv=OUTPUT_FILE=encryption_key.json
+$ cp lib/env.example.dart lib/env.dart
 ```
 
-where `encryption_key` is the encryption key you want to use to encrypt sensitive values and `your_iv` is the initialization vector.
+4. Generate the encrypted env and a temporary key file:
 
-You can also ask flutter_secure_dotenv to generate these automatically and output them into a file:
+NOTE: Encryption keys must be 128, 192, or 256 bits long.
 
 ```shell
-$ dart run build_runner build --define flutter_secure_dotenv_generator:flutter_secure_dotenv=OUTPUT_FILE=encryption_key.json
+# Auto-generate random key/IV and output to a temporary file
+$ dart run build_runner build \
+    --define flutter_secure_dotenv_generator:flutter_secure_dotenv=OUTPUT_FILE=encryption_key.json
 ```
 
-If you don't want to encrypt sensitive values, you can run the following command instead:
+Or provide your own key and IV:
+
+```shell
+$ dart run build_runner build \
+    --define flutter_secure_dotenv_generator:flutter_secure_dotenv=ENCRYPTION_KEY=Your_Base64_Key \
+    --define flutter_secure_dotenv_generator:flutter_secure_dotenv=IV=Your_Base64_IV \
+    --define flutter_secure_dotenv_generator:flutter_secure_dotenv=OUTPUT_FILE=encryption_key.json
+```
+
+If you don't need encryption at all:
 
 ```shell
 $ dart run build_runner build
 ```
 
-This command will generate the required Dart classes based on the `.env` file and the annotations in your code.
+5. Copy the key values from `encryption_key.json` into your `env.dart`, then **delete the JSON file**:
 
-4. Use the generated class in your code:
+```shell
+# Open encryption_key.json, copy ENCRYPTION_KEY and IV into env.dart, then:
+$ rm encryption_key.json
+```
+
+> The JSON file is a **temporary transfer mechanism** only. It should never be shipped in your app or committed to git.
+
+6. Use the generated class in your code:
 
 ```dart
 void main() {
-  final env = Env('encryption_key'); // Provide the encryption key
-  print(env.name); // Access environment variables
+  final env = Env.create();
+  print(env.apiKey);
   print(env.version);
-  print(env.test);
-  print(env.test2);
-  print(env.blah);
+  print(env.debugMode);
 }
+```
+
+7. Build release with obfuscation:
+
+```shell
+$ flutter build apk --obfuscate --split-debug-info=build/debug-info
 ```
 
 ## Annotations
@@ -152,9 +219,10 @@ part of 'example.dart';
 // **************************************************************************
 
 class _$Env extends Env {
-  const _$Env(this._encryptionKey) : super._();
+  const _$Env(this._encryptionKey, this._iv) : super._();
 
   final String _encryptionKey;
+  final String _iv;
   static final Uint8List _encryptedValues = Uint8List.fromList([81, 83,...]);
   @override
   String get name => _get('name');
@@ -215,7 +283,7 @@ This setup will ensure that the encrypted value is correctly decrypted and conve
 ## Limitations
 
 - The `flutter_secure_dotenv` package relies on the `build_runner` tool to generate the required code. Therefore, you need to run `dart run build_runner build` whenever changes are made to the environment class or the `.env` file.
-- It is important to keep the encryption key secure and never commit it to version control or expose it in any way.
+- It is important to keep the encryption key secure and never commit it to version control or expose it in any way. See the [Security Notice](#️-security-notice-encryption-key-management) section above and [SECURITY.md](SECURITY.md) for guidance.
 - The package currently supports encryption using the Advanced Encryption Standard (AES) algorithm in Cipher Block Chaining (CBC) mode. Other encryption algorithms and modes may be supported in the future.
 - Because we started using pointycastle now we only support CBC for now, but we will add support for other modes in the future. If you need another mode, please open an issue.
 
@@ -223,12 +291,10 @@ This setup will ensure that the encrypted value is correctly decrypted and conve
 
 The `flutter_secure_dotenv` package simplifies the process of generating Dart classes from a `.env` file while encrypting sensitive values. By using this package, you can ensure that your environment variables are securely stored and accessed in your Dart application.
 
-Rotate your secrets - make sure the old ones are not valid anymore. If you have any questions or feedback, please feel free to open an issue.
+Rotate your secrets — make sure the old ones are not valid anymore. If you have any questions or feedback, please feel free to open an issue.
 
 ## Features and Bugs
 
 Please file feature requests and bugs at the [issue tracker][tracker].
 
 [tracker]: https://github.com/mfazrinizar/flutter_secure_dotenv/issues
-
-<br>

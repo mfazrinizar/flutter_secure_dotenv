@@ -1,0 +1,13 @@
+targets:
+  $default:
+    builders:
+      flutter_secure_dotenv_generator:flutter_secure_dotenv:
+        # Set to false if you don't need the encryption key output file.
+        # When enabled, generates encryption_key.json with the key and IV
+        # that you must copy into your env.dart file.
+        enabled: true
+        generate_for:
+          exclude:
+            - lib/env.example.dart
+        options:
+          OUTPUT_FILE: encryption_key.json
