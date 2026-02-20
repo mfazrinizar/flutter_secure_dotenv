@@ -1,0 +1,8 @@
+# Local development overrides. Rename to pubspec_overrides.yaml for local testing.
+# Forces both packages to resolve to local paths, avoiding
+# hosted vs path conflicts during development.
+dependency_overrides:
+  flutter_secure_dotenv:
+    path: ../
+  flutter_secure_dotenv_generator:
+    path: ../../flutter_secure_dotenv_generator

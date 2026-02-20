@@ -1,0 +1,26 @@
+name: flutter_secure_dotenv_example
+description: Example Flutter app demonstrating flutter_secure_dotenv usage.
+publish_to: none
+version: 1.0.0
+
+environment:
+  sdk: ^3.6.0
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_secure_dotenv: ^2.0.0
+  # flutter_secure_dotenv: # this is local path, for running the hosted version, change to ^2.0.0 and remove the path override below
+  #   path: ../
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_secure_dotenv_generator: ^2.0.0
+  # flutter_secure_dotenv_generator: # this is local path, for running the hosted version, change to ^2.0.0 and remove the path override below
+  #   path: ../../flutter_secure_dotenv_generator
+  build_runner: ^2.11.1
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true
